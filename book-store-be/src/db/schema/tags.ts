@@ -1,8 +1,7 @@
-import { pgTable, varchar, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { pgTable, varchar, timestamp, integer } from 'drizzle-orm/pg-core';
 
 export const tags = pgTable('tags', {
-    id: uuid('id').primaryKey().defaultRandom(),
-    name: varchar('name', { length: 50 }).notNull().unique(),
+    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),    name: varchar('name', { length: 50 }).notNull().unique(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

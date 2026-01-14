@@ -1,7 +1,7 @@
-import { pgTable, text, varchar, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { pgTable, text, varchar, timestamp, integer } from 'drizzle-orm/pg-core';
 
 export const categories = pgTable('categories', {
-    id: uuid('id').primaryKey().defaultRandom(),
+    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
     name: varchar('name', { length: 100 }).notNull().unique(),
     description: text('description'),
     createdAt: timestamp('created_at').defaultNow().notNull(),

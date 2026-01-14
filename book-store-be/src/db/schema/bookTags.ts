@@ -1,14 +1,14 @@
-import { pgTable, uuid, primaryKey, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, primaryKey, timestamp, integer } from 'drizzle-orm/pg-core';
 import { books } from './books';
 import { tags } from './tags';
 
 export const bookTags = pgTable(
     'book_tags',
     {
-        bookId: uuid('book_id')
+        bookId: integer('book_id')
             .notNull()
             .references(() => books.id, { onDelete: 'cascade' }),
-        tagId: uuid('tag_id')
+        tagId: integer('tag_id')
             .notNull()
             .references(() => tags.id, { onDelete: 'cascade' }),
         createdAt: timestamp('created_at').defaultNow().notNull(),

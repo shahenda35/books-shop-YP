@@ -10,19 +10,24 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx src/db/seed.ts",
+    "db:reset": "tsx src/db/reset.ts",
+    "test": "vitest",
     "format": "prettier --write \"src/**/*.ts\""
   },
   "dependencies": {
     "@hono/node-server": "^1.19.9",
     "argon2": "^0.44.0",
+    "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.1",
     "hono": "^4.11.4",
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.16.3",
+    "postgres": "^3.4.8",
     "redis": "^5.10.0",
     "zod": "^4.3.5"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20.19.29",
     "drizzle-kit": "^0.31.8",
     "eslint": "^9.39.2",

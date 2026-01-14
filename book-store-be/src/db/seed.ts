@@ -5,13 +5,33 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+async function clearDatabase() {
+    try {
+        console.log('🧹 Clearing existing data...');
+        
+        await db.delete(bookTags);
+        await db.delete(books);
+        await db.delete(tags);
+        await db.delete(categories);
+        await db.delete(authors);
+        await db.delete(users);
+        
+        console.log('✅ Database cleared');
+    } catch (error) {
+        console.error('❌ Error clearing database:', error);
+        throw error;
+    }
+}
+
 async function seed() {
     try {
         console.log('🌱 Seeding database...');
+        
+        await clearDatabase();
 
         const hashedPassword = await hashPassword('password123');
 
-        const [user1, user2] = await db
+        const usersResult = await db
             .insert(users)
             .values([
                 {
@@ -31,9 +51,12 @@ async function seed() {
             ])
             .returning();
 
+        const user1 = usersResult[0];
+        const user2 = usersResult[1];
+
         console.log('✅ Users created');
 
-        const [fiction, nonFiction, science, tech, history] = await db
+        const categoriesResult = await db
             .insert(categories)
             .values([
                 { name: 'Fiction', description: 'Fictional stories and novels' },
@@ -44,9 +67,15 @@ async function seed() {
             ])
             .returning();
 
+        const fiction = categoriesResult[0];
+        const nonFiction = categoriesResult[1];
+        const science = categoriesResult[2];
+        const tech = categoriesResult[3];
+        const history = categoriesResult[4];
+
         console.log('✅ Categories created');
 
-        const [author1, author2, author3, author4] = await db
+        const authorsResult = await db
             .insert(authors)
             .values([
                 { name: 'J.K. Rowling', bio: 'British author, best known for Harry Potter series' },
@@ -56,9 +85,14 @@ async function seed() {
             ])
             .returning();
 
+        const author1 = authorsResult[0];
+        const author2 = authorsResult[1];
+        const author3 = authorsResult[2];
+        const author4 = authorsResult[3];
+
         console.log('✅ Authors created');
 
-        const [adventure, fantasy, sciFi, educational, programming] = await db
+        const tagsResult = await db
             .insert(tags)
             .values([
                 { name: 'Adventure' },
@@ -69,9 +103,15 @@ async function seed() {
             ])
             .returning();
 
+        const adventure = tagsResult[0];
+        const fantasy = tagsResult[1];
+        const sciFi = tagsResult[2];
+        const educational = tagsResult[3];
+        const programming = tagsResult[4];
+
         console.log('✅ Tags created');
 
-        const [book1, book2, book3, book4, book5, book6] = await db
+        const booksResult = await db
             .insert(books)
             .values([
                 {
@@ -130,6 +170,13 @@ async function seed() {
                 },
             ])
             .returning();
+
+        const book1 = booksResult[0];
+        const book2 = booksResult[1];
+        const book3 = booksResult[2];
+        const book4 = booksResult[3];
+        const book5 = booksResult[4];
+        const book6 = booksResult[5];
 
         console.log('✅ Books created');
 
