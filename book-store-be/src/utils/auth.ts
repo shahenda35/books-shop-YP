@@ -9,27 +9,28 @@ export const hashPassword = async (password: string): Promise<string> => {
     });
 };
 
-export const comparePassword = async (
+export const validatePassword = async (
     password: string,
     hashedPassword: string
 ): Promise<boolean> => {
     return argon2.verify(hashedPassword, password);
 };
 
-export const generateToken = (userId: string): string => {
-    return jwt.sign(
-        { userId },
-        config.jwt.secret,
-        { expiresIn: config.jwt.expiresIn }
-    );
+export const generateToken = (userId: number) => {
+  const jti = crypto.randomUUID();
+
+  const token = jwt.sign(
+    { userId, jti },
+    config.jwt.secret,
+    { expiresIn: config.jwt.expiresIn }
+  );
+
+  return { token, jti };
 };
 
-export const verifyToken = (token: string): { userId: string } => {
-    const payload = jwt.verify(token, config.jwt.secret) as jwt.JwtPayload;
-
-    if (!payload.userId) {
-        throw new Error('Invalid token payload');
-    }
-
-    return { userId: payload.userId as string };
+export const verifyToken = (token: string) => {
+  return jwt.verify(token, config.jwt.secret) as {
+    userId: number;
+    jti: string;
+  };
 };

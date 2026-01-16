@@ -1,6 +1,6 @@
-import { hashPassword } from '../utils/auth';
 import { db } from './index';
 import { users, authors, categories, tags, books, bookTags } from './schema';
+import { AuthService } from '../modules/auth/auth.service';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -29,27 +29,30 @@ async function seed() {
         
         await clearDatabase();
 
-        const hashedPassword = await hashPassword('password123');
+        const authService = new AuthService();
 
-        const usersResult = await db
-            .insert(users)
-            .values([
-                {
-                    username: 'johndoe',
-                    email: 'john@example.com',
-                    password: hashedPassword,
-                    fullName: 'John Doe',
-                    phoneNumber: '+1234567890',
-                },
-                {
-                    username: 'janedoe',
-                    email: 'jane@example.com',
-                    password: hashedPassword,
-                    fullName: 'Jane Doe',
-                    phoneNumber: '+0987654321',
-                },
-            ])
-            .returning();
+        const usersData = [
+            {
+                username: 'johndoe',
+                email: 'john@example.com',
+                password: 'password123',
+                fullName: 'John Doe',
+                phoneNumber: '+1234567890',
+            },
+            {
+                username: 'janedoe',
+                email: 'jane@example.com',
+                password: 'password123',
+                fullName: 'Jane Doe',
+                phoneNumber: '+0987654321',
+            },
+        ];
+
+        const usersResult = [];
+        for (const userData of usersData) {
+            const registeredUser = await authService.register(userData);
+            usersResult.push(registeredUser.user);
+        }
 
         const user1 = usersResult[0];
         const user2 = usersResult[1];
