@@ -63,4 +63,22 @@ export class BooksController {
       return errorResponse(c, err instanceof Error ? err.message : 'Failed to delete book');
     }
   }
+
+   async myBooks(c: Context) {
+    try {
+      const userId = Number(c.get('userId'));
+      const query = c.req.query();
+
+      const books = await booksService.myBooks(userId, {
+        page: Number(query.page),
+        limit: Number(query.limit),
+        search: query.search,
+        sort: query.sort as 'asc' | 'desc',
+      });
+
+      return successResponse(c, books);
+    } catch (e) {
+      return errorResponse(c, 'Failed to fetch my books');
+    }
+  }
 }

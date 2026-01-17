@@ -297,13 +297,7 @@
                                     "disabled": true
                                 },
                                 {
-                                    "key": "sortBy",
-                                    "value": "title",
-                                    "description": "Sort field (title, price, createdAt)",
-                                    "disabled": true
-                                },
-                                {
-                                    "key": "sortOrder",
+                                    "key": "sort",
                                     "value": "asc",
                                     "description": "Sort order (asc, desc)",
                                     "disabled": true
@@ -311,7 +305,7 @@
                                 {
                                     "key": "categoryId",
                                     "value": "",
-                                    "description": "Filter by category UUID",
+                                    "description": "Filter by category ID",
                                     "disabled": true
                                 },
                                 {
@@ -328,7 +322,7 @@
                                 }
                             ]
                         },
-                        "description": "Get all books with pagination, search, sorting, and filters"
+                        "description": "Get all books with pagination, search by title, sorting, and price/category filters"
                     },
                     "response": []
                 },
@@ -349,12 +343,12 @@
                             "variable": [
                                 {
                                     "key": "id",
-                                    "value": "",
-                                    "description": "Book UUID"
+                                    "value": "1",
+                                    "description": "Book ID (numeric)"
                                 }
                             ]
                         },
-                        "description": "Get detailed information about a specific book"
+                        "description": "Get detailed information about a specific book including title, price, thumbnail, author, category, and tags"
                     },
                     "response": []
                 },
@@ -374,7 +368,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"title\": \"New Amazing Book\",\n  \"description\": \"This is a great book about amazing things\",\n  \"price\": \"29.99\",\n  \"thumbnail\": \"https://example.com/book-cover.jpg\",\n  \"authorId\": \"<author-uuid>\",\n  \"categoryId\": \"<category-uuid>\",\n  \"tagIds\": [\"<tag-uuid-1>\", \"<tag-uuid-2>\"]\n}"
+                            "raw": "{\n  \"title\": \"New Amazing Book\",\n  \"description\": \"This is a great book about amazing things\",\n  \"price\": 29.99,\n  \"thumbnail\": \"https://example.com/book-cover.jpg\",\n  \"authorId\": 1,\n  \"categoryId\": 1,\n  \"tagIds\": [1, 2]\n}"
                         },
                         "url": {
                             "raw": "{{baseUrl}}/books",
@@ -385,7 +379,7 @@
                                 "books"
                             ]
                         },
-                        "description": "Create a new book (requires authentication)"
+                        "description": "Create a new book with title, description, price, category, and tags (requires authentication)"
                     },
                     "response": []
                 },
@@ -405,7 +399,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"title\": \"Updated Book Title\",\n  \"price\": \"34.99\",\n  \"description\": \"Updated description\"\n}"
+                            "raw": "{\n  \"title\": \"Updated Book Title\",\n  \"price\": 34.99,\n  \"description\": \"Updated description\"\n}"
                         },
                         "url": {
                             "raw": "{{baseUrl}}/books/:id",
@@ -419,12 +413,12 @@
                             "variable": [
                                 {
                                     "key": "id",
-                                    "value": "",
-                                    "description": "Book UUID"
+                                    "value": "1",
+                                    "description": "Book ID (numeric)"
                                 }
                             ]
                         },
-                        "description": "Update own book only (requires authentication)"
+                        "description": "Update your own book only (requires authentication and ownership)"
                     },
                     "response": []
                 },
@@ -450,20 +444,15 @@
                             "variable": [
                                 {
                                     "key": "id",
-                                    "value": "",
-                                    "description": "Book UUID"
+                                    "value": "1",
+                                    "description": "Book ID (numeric)"
                                 }
                             ]
                         },
-                        "description": "Delete own book only (requires authentication)"
+                        "description": "Delete your own book only (requires authentication and ownership)"
                     },
                     "response": []
-                }
-            ]
-        },
-        {
-            "name": "My Books",
-            "item": [
+                },
                 {
                     "name": "Get My Books",
                     "request": {
@@ -475,12 +464,14 @@
                             }
                         ],
                         "url": {
-                            "raw": "{{baseUrl}}/my-books?page=1&limit=10",
+                            "raw": "{{baseUrl}}/books/me/list?page=1&limit=10",
                             "host": [
                                 "{{baseUrl}}"
                             ],
                             "path": [
-                                "my-books"
+                                "books",
+                                "me",
+                                "list"
                             ],
                             "query": [
                                 {
@@ -500,38 +491,14 @@
                                     "disabled": true
                                 },
                                 {
-                                    "key": "sortBy",
-                                    "value": "title",
-                                    "description": "Sort field (title, price, createdAt)",
-                                    "disabled": true
-                                },
-                                {
-                                    "key": "sortOrder",
-                                    "value": "desc",
+                                    "key": "sort",
+                                    "value": "asc",
                                     "description": "Sort order (asc, desc)",
-                                    "disabled": true
-                                },
-                                {
-                                    "key": "categoryId",
-                                    "value": "",
-                                    "description": "Filter by category UUID",
-                                    "disabled": true
-                                },
-                                {
-                                    "key": "minPrice",
-                                    "value": "10",
-                                    "description": "Minimum price",
-                                    "disabled": true
-                                },
-                                {
-                                    "key": "maxPrice",
-                                    "value": "100",
-                                    "description": "Maximum price",
                                     "disabled": true
                                 }
                             ]
                         },
-                        "description": "Get all books created by the authenticated user with pagination, search, sorting, and filters"
+                        "description": "Get all books created by the authenticated user with pagination, search, and sorting by title"
                     },
                     "response": []
                 }

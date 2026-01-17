@@ -7,6 +7,7 @@ export const CreateBookSchema = z.object({
   thumbnail: z.string().url().optional(),
   authorId: z.number(),
   categoryId: z.number(),
+  tagIds : z.array(z.number()).optional(),
 });
 
 export const UpdateBookSchema = CreateBookSchema.partial();
@@ -16,4 +17,7 @@ export const BookListQuerySchema = z.object({
   limit: z.string().optional(),
   search: z.string().optional(),
   sort: z.enum(['asc', 'desc']).optional(),
+  categoryId: z.string().optional(),
+  minPrice: z.string().optional(),
+  maxPrice: z.string().optional(),
 });
