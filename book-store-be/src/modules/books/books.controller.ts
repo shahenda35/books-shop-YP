@@ -77,6 +77,9 @@ export class BooksController {
         limit: Number(query.limit),
         search: query.search,
         sort: query.sort as 'asc' | 'desc',
+        categoryId: query.categoryId ? Number(query.categoryId) : undefined,
+        minPrice: query.minPrice ? Number(query.minPrice) : undefined,
+        maxPrice: query.maxPrice ? Number(query.maxPrice) : undefined,
       });
 
       return successResponse(c, books);

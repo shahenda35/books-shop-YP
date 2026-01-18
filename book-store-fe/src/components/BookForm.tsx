@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import { createBook, updateBook } from '@/app/actions/books';
 import apiClient from '@/lib/apiClient';
 import { bookSchema } from '@/lib/validation';
@@ -22,6 +23,7 @@ interface BookFormProps {
 
 export function BookForm({ book, mode }: BookFormProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { showToast } = useToast();
   const [authors, setAuthors] = useState<{ id: number; name: string }[]>([]);
   const [categories, setCategories] = useState<{ id: number; name: string }[]>([]);
@@ -126,6 +128,8 @@ export function BookForm({ book, mode }: BookFormProps) {
           return;
         }
         showToast('Book created successfully!', 'success');
+        queryClient.invalidateQueries({ queryKey: ['books'] });
+        queryClient.invalidateQueries({ queryKey: ['my-books'] });
         router.push('/my-books');
       } else if (book) {
         const result = await updateBook(String(book.id), data);
@@ -134,8 +138,10 @@ export function BookForm({ book, mode }: BookFormProps) {
           return;
         }
         showToast('Book updated successfully!', 'success');
-        router.refresh();
-        setTimeout(() => router.push('/my-books'), 500);
+        queryClient.invalidateQueries({ queryKey: ['books'] });
+        queryClient.invalidateQueries({ queryKey: ['my-books'] });
+        queryClient.invalidateQueries({ queryKey: ['book', String(book.id)] });
+        router.push('/my-books');
       }
     } catch {
       showToast('Failed to save book', 'error');

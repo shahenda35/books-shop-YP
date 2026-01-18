@@ -173,7 +173,7 @@ export class BooksService {
 
    async myBooks(
     userId: number,
-    query: { page?: number; limit?: number; search?: string; sort?: 'asc' | 'desc' }
+    query: { page?: number; limit?: number; search?: string; sort?: 'asc' | 'desc'; categoryId?: number; minPrice?: number; maxPrice?: number }
   ) {
     const page = query.page ?? 1;
     const limit = query.limit ?? 10;
@@ -182,6 +182,10 @@ export class BooksService {
     const whereConditions = [
       eq(books.userId, userId),
       query.search ? ilike(books.title, `%${query.search}%`) : undefined,
+      query.categoryId ? eq(books.categoryId, query.categoryId) : undefined,
+      query.minPrice !== undefined && query.maxPrice !== undefined
+        ? and(sql`${books.price} >= ${query.minPrice}`, sql`${books.price} <= ${query.maxPrice}`)
+        : undefined,
     ].filter(Boolean);
 
     const orderBy =
