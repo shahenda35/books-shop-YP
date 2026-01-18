@@ -1,11 +1,49 @@
 import { cookies } from 'next/headers';
 import { User } from '@/types';
-import { AUTH_COOKIE_NAME, USER_COOKIE_NAME } from './constants';
+import { AUTH_COOKIE_NAME, USER_COOKIE_NAME, STATIC_USER } from './constants';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
+const STATIC_MODE = process.env.NEXT_PUBLIC_STATIC_MODE === 'true';
+
 export async function login(email: string, password: string): Promise<User | null> {
   try {
+    // If in static mode, use static credentials
+    if (STATIC_MODE) {
+      if (email === STATIC_USER.email && password === STATIC_USER.password) {
+        const mockToken = Buffer.from(JSON.stringify({ 
+          userId: STATIC_USER.id, 
+          email: STATIC_USER.email,
+          timestamp: Date.now() 
+        })).toString('base64');
+
+        const user: User = {
+          id: STATIC_USER.id,
+          name: STATIC_USER.name,
+          email: STATIC_USER.email,
+        };
+
+        const cookieStore = await cookies();
+        cookieStore.set(AUTH_COOKIE_NAME, mockToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          maxAge: 60 * 60 * 24 * 7,
+        });
+
+        cookieStore.set(USER_COOKIE_NAME, JSON.stringify(user), {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          maxAge: 60 * 60 * 24 * 7,
+        });
+
+        return user;
+      }
+      return null;
+    }
+
+    // Otherwise, use real backend authentication
     const response = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       headers: {
@@ -38,14 +76,14 @@ export async function login(email: string, password: string): Promise<User | nul
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7,
     });
 
     cookieStore.set(USER_COOKIE_NAME, JSON.stringify(user), {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7,
     });
 
     return user;
@@ -56,27 +94,29 @@ export async function login(email: string, password: string): Promise<User | nul
 }
 
 export async function logout() {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(AUTH_COOKIE_NAME);
+  if (!STATIC_MODE) {
+    try {
+      const cookieStore = await cookies();
+      const token = cookieStore.get(AUTH_COOKIE_NAME);
 
-    if (token) {
-      await fetch(`${API_URL}/auth/logout`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token.value}`,
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-      });
+      if (token) {
+        await fetch(`${API_URL}/auth/logout`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token.value}`,
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        });
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
     }
-  } catch (error) {
-    console.error('Logout error:', error);
-  } finally {
-    const cookieStore = await cookies();
-    cookieStore.delete(AUTH_COOKIE_NAME);
-    cookieStore.delete(USER_COOKIE_NAME);
   }
+  
+  const cookieStore = await cookies();
+  cookieStore.delete(AUTH_COOKIE_NAME);
+  cookieStore.delete(USER_COOKIE_NAME);
 }
 
 export async function getUser(): Promise<User | null> {

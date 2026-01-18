@@ -13,6 +13,21 @@ export const PRICE_RANGES = [
 export const AUTH_COOKIE_NAME = 'auth-token';
 export const USER_COOKIE_NAME = 'user-data';
 
+export const STATIC_USER = {
+  id: '1',
+  email: 'admin@books.com',
+  password: 'admin123',
+  name: 'Admin User',
+} as const;
+
+export const STATIC_CATEGORIES = [
+  { id: 1, name: 'Technology' },
+  { id: 2, name: 'Science' },
+  { id: 3, name: 'History' },
+  { id: 4, name: 'Fantasy' },
+  { id: 5, name: 'Biography' },
+] as const;
+
 export const ROUTES = {
   HOME: '/',
   LOGIN: '/login',

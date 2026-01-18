@@ -198,7 +198,7 @@ async function seed() {
 
         console.log('🎉 Seeding completed successfully!');
         console.log('\n📝 Sample credentials:');
-        console.log('User 1: john@example.com / password123');
+        console.log('User 1: admin@books.com / admin123');
         console.log('User 2: jane@example.com / password123');
 
         process.exit(0);
