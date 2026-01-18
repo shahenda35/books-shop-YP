@@ -6,17 +6,8 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 const STATIC_MODE = process.env.NEXT_PUBLIC_STATIC_MODE === 'true';
 
 export async function GET(request: NextRequest) {
-  const user = await getUser();
-  if (!user) {
-    return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
-  }
-
   const cookieStore = request.cookies;
   const token = cookieStore.get(AUTH_COOKIE_NAME);
-
-  if (!token) {
-    return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
-  }
 
   try {
     if (STATIC_MODE) {
@@ -51,12 +42,17 @@ export async function GET(request: NextRequest) {
     }
 
     const searchParams = request.nextUrl.searchParams;
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token.value}`;
+    }
+
     const response = await fetch(`${API_URL}/books?${searchParams.toString()}`, {
       method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token.value}`,
-        'Content-Type': 'application/json',
-      },
+      headers,
       credentials: 'include',
     });
 

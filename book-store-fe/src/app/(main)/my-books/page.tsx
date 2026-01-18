@@ -71,7 +71,7 @@ export default function MyBooksPage() {
   }
 
   const books = data?.data || [];
-  const totalPages = data?.pagination.pages || 1;
+  const totalPages = data?.pagination?.pages || 1;
 
   return (
     <>
@@ -131,9 +131,9 @@ export default function MyBooksPage() {
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Showing <span className="font-semibold">{(currentPage - 1) * 8 + 1}</span> to{' '}
                   <span className="font-semibold">
-                    {Math.min(currentPage * 8, data?.pagination.total || 0)}
+                    {Math.min(currentPage * 8, data?.pagination?.total || 0)}
                   </span>{' '}
-                  of <span className="font-semibold">{data?.pagination.total || 0}</span> books
+                  of <span className="font-semibold">{data?.pagination?.total || 0}</span> books
                 </p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

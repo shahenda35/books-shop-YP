@@ -26,14 +26,11 @@ export function useBooks(params: UseBooksParams = {}) {
       }
       if (params.sortOrder) searchParams.append('sort', params.sortOrder);
 
-      const response = await apiClient.get<{ 
-        success: boolean; 
-        data: Book[];
-        pagination: { page: number; limit: number; total: number; pages: number };
-      }>(
+     const response = await apiClient.get<{ success: boolean; data: PaginatedResponse<Book> }>(
         `/api/books?${searchParams}`,
       );
-      return response.data;
+      return response.data.data;
+    
     },
   });
 }
@@ -67,14 +64,11 @@ export function useMyBooks(params: UseBooksParams = {}) {
       }
       if (params.sortOrder) searchParams.append('sort', params.sortOrder);
 
-      const response = await apiClient.get<{ 
-        success: boolean; 
-        data: Book[];
-        pagination: { page: number; limit: number; total: number; pages: number };
-      }>(
+       const response = await apiClient.get<{ success: boolean; data: PaginatedResponse<Book> }>(
         `/api/my-books?${searchParams}`,
       );
-      return response.data;
+      return response.data.data;
+  
     },
   });
 }

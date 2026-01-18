@@ -47,7 +47,7 @@ export default function BooksPage() {
     );
 
   const books = data?.data || [];
-  const totalPages = data?.pagination.pages || 1;
+  const totalPages = data?.pagination?.pages || 1;
 
   return (
     <>
@@ -56,7 +56,7 @@ export default function BooksPage() {
           <div>
            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Books Shop</h1>
             <p className="text-gray-600 dark:text-gray-400 mt-1">
-              Browse and discover your next favorite book • {data?.pagination.total || 0} books
+              Browse and discover your next favorite book • {data?.pagination?.total || 0} books
               available
             </p>
           </div>
@@ -109,9 +109,9 @@ export default function BooksPage() {
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Showing <span className="font-semibold">{(currentPage - 1) * 8 + 1}</span> to{' '}
                 <span className="font-semibold">
-                  {Math.min(currentPage * 8, data?.pagination.total || 0)}
+                  {Math.min(currentPage * 8, data?.pagination?.total || 0)}
                 </span>{' '}
-                of <span className="font-semibold">{data?.pagination.total || 0}</span> books
+                of <span className="font-semibold">{data?.pagination?.total || 0}</span> books
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
