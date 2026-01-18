@@ -125,6 +125,7 @@ export class BooksService {
       .insert(books)
       .values({
         ...bookData,
+        price: String(bookData.price),
         userId: Number(userId),
       })
       .returning();
@@ -150,9 +151,14 @@ export class BooksService {
   }
 
   async updateBook(userId: string, bookId: number, data: Partial<NewBook>) {
+    const updateData = { ...data };
+    
+    if (updateData.price !== undefined) 
+      updateData.price = String(updateData.price);
+    
     const [book] = await db
       .update(books)
-      .set(data)
+      .set(updateData)
       .where(and(eq(books.id, bookId), eq(books.userId, Number(userId))))
       .returning();
 

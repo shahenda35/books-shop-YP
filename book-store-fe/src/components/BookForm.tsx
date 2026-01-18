@@ -123,6 +123,7 @@ export function BookForm({ book, mode }: BookFormProps) {
     try {
       if (mode === 'create') {
         const result = await createBook(data);
+
         if (result?.success === false) {
           showToast(result.error || 'Failed to save book', 'error');
           return;
@@ -279,32 +280,67 @@ export function BookForm({ book, mode }: BookFormProps) {
                 Cover Image
               </label>
 
-              <div className="flex flex-col gap-3 md:flex-row md:items-center">
-                <Input
-                  label="Thumbnail URL"
-                  placeholder="https://example.com/image.jpg"
-                  error={errors.thumbnail?.message}
-                  value={thumbnailUrl || ''}
-                  onChange={(e) =>
-                    setValue('thumbnail', e.target.value, {
-                      shouldValidate: true,
-                      shouldDirty: true,
-                    })
-                  }
-                />
-
-                <div className="flex flex-col gap-2">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleImageUpload(e.target.files?.[0])}
-                    className="text-sm"
-                    disabled={uploading}
-                  />
-                  <p className="text-xs text-gray-500">
-                    {uploading ? 'Uploading...' : 'Upload image (max 5MB)'}
-                  </p>
+              <div className="space-y-3">
+                <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 hover:border-blue-500 dark:hover:border-blue-400 transition-colors">
+                  <div className="flex flex-col items-center justify-center">
+                    <svg className="h-12 w-12 text-gray-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    
+                    <label htmlFor="image-upload" className="cursor-pointer">
+                      <p className="text-center">
+                        <span className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">
+                          Click to upload
+                        </span>
+                        <span className="text-gray-600 dark:text-gray-400"> or drag and drop</span>
+                      </p>
+                    </label>
+                    
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                      PNG, JPG, GIF or WebP (max 5MB)
+                    </p>
+                    
+                    <input
+                      id="image-upload"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(e.target.files?.[0])}
+                      className="hidden"
+                      disabled={uploading}
+                    />
+                    
+                    <p className="text-xs text-gray-400 mt-3 italic">
+                      The thumbnail URL will be generated automatically after upload
+                    </p>
+                  </div>
                 </div>
+
+                {uploading && (
+                  <div className="flex items-center gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
+                    <div className="animate-spin">
+                      <svg className="h-4 w-4 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                    </div>
+                    <p className="text-sm text-blue-700 dark:text-blue-200">Uploading image...</p>
+                  </div>
+                )}
+
+                {thumbnailUrl && (
+                  <div className="flex items-start gap-3 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md">
+                    <svg className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-green-800 dark:text-green-200">Image uploaded successfully</p>
+                      <p className="text-xs text-green-700 dark:text-green-300 break-all mt-1">{thumbnailUrl}</p>
+                    </div>
+                  </div>
+                )}
+                
+                {errors.thumbnail && (
+                  <p className="text-sm text-red-600 dark:text-red-400">{errors.thumbnail.message}</p>
+                )}
               </div>
             </div>
 
