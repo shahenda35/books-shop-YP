@@ -270,7 +270,12 @@
                     "name": "List All Books",
                     "request": {
                         "method": "GET",
-                        "header": [],
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
                         "url": {
                             "raw": "{{baseUrl}}/books?page=1&limit=10",
                             "host": [
@@ -330,7 +335,12 @@
                     "name": "Get Book Details",
                     "request": {
                         "method": "GET",
-                        "header": [],
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
                         "url": {
                             "raw": "{{baseUrl}}/books/:id",
                             "host": [
@@ -499,6 +509,101 @@
                             ]
                         },
                         "description": "Get all books created by the authenticated user with pagination, search, and sorting by title"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Authors",
+            "item": [
+                {
+                    "name": "List Authors",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/authors",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "authors"
+                            ]
+                        },
+                        "description": "Get list of all authors (requires authentication)"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Categories",
+            "item": [
+                {
+                    "name": "List Categories",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/categories",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "categories"
+                            ]
+                        },
+                        "description": "Get list of all categories (requires authentication)"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Upload",
+            "item": [
+                {
+                    "name": "Upload Image",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "file",
+                                    "type": "file",
+                                    "src": []
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/upload/image",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "upload",
+                                "image"
+                            ]
+                        },
+                        "description": "Upload an image file (requires authentication). Returns URL to uploaded image."
                     },
                     "response": []
                 }
