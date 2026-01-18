@@ -267,15 +267,10 @@
             "name": "Books Shop",
             "item": [
                 {
-                    "name": "List All Books",
+                    "name": "List All Books (Public)",
                     "request": {
                         "method": "GET",
-                        "header": [
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{token}}"
-                            }
-                        ],
+                        "header": [],
                         "url": {
                             "raw": "{{baseUrl}}/books?page=1&limit=10",
                             "host": [
@@ -327,20 +322,15 @@
                                 }
                             ]
                         },
-                        "description": "Get all books with pagination, search by title, sorting, and price/category filters"
+                        "description": "Get all books with pagination, search by title, sorting, and price/category filters (PUBLIC - no authentication required)"
                     },
                     "response": []
                 },
                 {
-                    "name": "Get Book Details",
+                    "name": "Get Book Details (Public)",
                     "request": {
                         "method": "GET",
-                        "header": [
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{token}}"
-                            }
-                        ],
+                        "header": [],
                         "url": {
                             "raw": "{{baseUrl}}/books/:id",
                             "host": [
@@ -358,7 +348,7 @@
                                 }
                             ]
                         },
-                        "description": "Get detailed information about a specific book including title, price, thumbnail, author, category, and tags"
+                        "description": "Get detailed information about a specific book including title, price, thumbnail, author, category, and tags (PUBLIC - no authentication required)"
                     },
                     "response": []
                 },
@@ -508,7 +498,7 @@
                                 }
                             ]
                         },
-                        "description": "Get all books created by the authenticated user with pagination, search, and sorting by title"
+                        "description": "Get all books created by the authenticated user with pagination, search, and sorting by title (PROTECTED - requires authentication)"
                     },
                     "response": []
                 }

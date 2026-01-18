@@ -83,7 +83,7 @@ export class BooksController {
       });
 
       return successResponse(c, books);
-    } catch{
+    } catch {
       return errorResponse(c, 'Failed to fetch my books');
     }
   }
