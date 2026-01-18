@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -24,6 +26,7 @@ export default function ResetPasswordPage() {
     handleSubmit,
     formState: { errors },
   } = useForm<ResetPasswordFormData>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(resetPasswordSchema as any),
     defaultValues: {
       email: emailParam,
