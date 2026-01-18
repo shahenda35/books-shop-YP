@@ -14,6 +14,7 @@ export default function ForgotPasswordPage() {
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [emailValue, setEmailValue] = useState('');
 
   const {
     register,
@@ -61,6 +62,7 @@ export default function ForgotPasswordPage() {
           <CardTitle>Reset Password</CardTitle>
           <CardDescription>Enter your email to reset your password</CardDescription>
         </CardHeader>
+
         <CardContent>
           {submitted ? (
             <div className="text-center space-y-4">
@@ -78,26 +80,30 @@ export default function ForgotPasswordPage() {
                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
+
                 <h3 className="font-semibold text-green-900 dark:text-green-100">
                   Check your email
                 </h3>
+
                 <p className="text-sm text-green-700 dark:text-green-300 mt-2">
                   We&apos;ve sent a password reset link to your email. Please check your inbox and
                   click the link to reset your password.
                 </p>
               </div>
+
               <div className="space-y-2">
-                <p className="text-sm text-gray-600 dark:text-gray-400">Have the OTP code ready?</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Have the OTP code ready?
+                </p>
+
                 <Link
-                  href={`/reset-password?email=${encodeURIComponent(
-                    (document.querySelector('input[type="email"]') as HTMLInputElement)?.value ||
-                      '',
-                  )}`}
+                  href={`/reset-password?email=${encodeURIComponent(emailValue)}`}
                   className="inline-block w-full"
                 >
                   <Button className="w-full">Go to Reset Password</Button>
                 </Link>
               </div>
+
               <Link
                 href="/login"
                 className="text-blue-600 dark:text-blue-400 hover:underline text-sm"
@@ -112,7 +118,9 @@ export default function ForgotPasswordPage() {
                 type="email"
                 placeholder="Enter your registered email"
                 error={errors.email?.message}
-                {...register('email')}
+                {...register('email', {
+                  onChange: (e) => setEmailValue(e.target.value),
+                })}
               />
 
               <Button type="submit" className="w-full" isLoading={isLoading}>
