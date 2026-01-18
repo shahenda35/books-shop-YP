@@ -12,6 +12,8 @@
     "db:seed": "tsx src/db/seed.ts",
     "db:reset": "tsx src/db/reset.ts",
     "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
     "format": "prettier --write \"src/**/*.ts\""
   },
   "dependencies": {
@@ -29,6 +31,7 @@
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20.19.29",
+    "@vitest/coverage-v8": "4.0.17",
     "drizzle-kit": "^0.31.8",
     "eslint": "^9.39.2",
     "prettier": "^3.7.4",

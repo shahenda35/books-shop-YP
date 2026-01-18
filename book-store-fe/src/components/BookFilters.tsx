@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { PRICE_RANGES } from '@/lib/constants';
 import { Button } from './ui/Button';
