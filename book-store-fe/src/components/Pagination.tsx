@@ -2,6 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { Button } from './ui/Button';
+import { useRef } from 'react';
 
 interface PaginationProps {
   currentPage: number;
@@ -11,6 +12,15 @@ interface PaginationProps {
 
 export function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+  const scrollPosRef = useRef(0);
+
+  const handlePageChange = (page: number) => {
+    scrollPosRef.current = window.scrollY;
+    onPageChange(page);
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: scrollPosRef.current, behavior: 'auto' });
+    });
+  };
 
   const getVisiblePages = () => {
     if (totalPages <= 7) return pages;
@@ -33,7 +43,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
       <Button
         variant="outline"
         size="sm"
-        onClick={() => onPageChange(currentPage - 1)}
+        onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage === 1}
       >
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -45,7 +55,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         typeof page === 'number' ? (
           <button
             key={index}
-            onClick={() => onPageChange(page)}
+            onClick={() => handlePageChange(page)}
             className={cn(
               'h-9 w-9 rounded-md text-sm font-medium transition-colors',
               currentPage === page
@@ -65,7 +75,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
       <Button
         variant="outline"
         size="sm"
-        onClick={() => onPageChange(currentPage + 1)}
+        onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
       >
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

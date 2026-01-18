@@ -25,7 +25,7 @@ export default function MyBooksPage() {
 
   const { data, isLoading, error } = useMyBooks({
     page: currentPage,
-    limit: 12,
+    limit: 8,
     ...filters,
   });
   const handleFiltersChange = (newFilters: FilterValues) => {
@@ -118,7 +118,7 @@ export default function MyBooksPage() {
               />
             </svg>
             <p className="text-gray-600 dark:text-gray-400 text-lg">
-              You haven't added any books yet
+              You haven&apos;t added any books yet
             </p>
             <Button asChild>
               <Link href="/books/new">Add Your First Book</Link>
@@ -126,19 +126,32 @@ export default function MyBooksPage() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {books.map((book: Book) => (
-                <BookCard key={book.id} book={book} showActions onDelete={setDeleteId} />
-              ))}
+            <div>
+              <div className="mb-6">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Showing <span className="font-semibold">{(currentPage - 1) * 8 + 1}</span> to{' '}
+                  <span className="font-semibold">
+                    {Math.min(currentPage * 8, data?.pagination.total || 0)}
+                  </span>{' '}
+                  of <span className="font-semibold">{data?.pagination.total || 0}</span> books
+                </p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {books.map((book: Book) => (
+                  <BookCard key={book.id} book={book} showActions onDelete={setDeleteId} />
+                ))}
+              </div>
             </div>
 
             {totalPages > 1 && (
-              <div className="mt-8">
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={setCurrentPage}
-                />
+              <div className="mt-12 flex justify-center">
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 ">
+              <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                  />
+                </div>
               </div>
             )}
           </>

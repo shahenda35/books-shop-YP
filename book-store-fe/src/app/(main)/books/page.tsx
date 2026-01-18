@@ -27,7 +27,7 @@ export default function BooksPage() {
 
   const { data, isLoading, error } = useBooks({
     page: currentPage,
-    limit: 12,
+    limit: 8,
     ...filters,
   });
 
@@ -107,9 +107,9 @@ export default function BooksPage() {
           <div>
             <div className="mb-6">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Showing <span className="font-semibold">{(currentPage - 1) * 12 + 1}</span> to{' '}
+                Showing <span className="font-semibold">{(currentPage - 1) * 8 + 1}</span> to{' '}
                 <span className="font-semibold">
-                  {Math.min(currentPage * 12, data?.pagination.total || 0)}
+                  {Math.min(currentPage * 8, data?.pagination.total || 0)}
                 </span>{' '}
                 of <span className="font-semibold">{data?.pagination.total || 0}</span> books
               </p>
@@ -123,7 +123,7 @@ export default function BooksPage() {
 
           {totalPages > 1 && (
             <div className="mt-12 flex justify-center">
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 w-full max-w-2xl">
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-6 ">
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}
