@@ -106,6 +106,8 @@ export class BooksService {
       authorId: book[0].books.authorId,
       category: book[0].categories?.name,
       categoryId: book[0].books.categoryId,
+      userId: book[0].books.userId,
+      createdAt: book[0].books.createdAt,
       tags: bookTagsList.map(t => ({ id: t.id, name: t.name })),
     };
   }

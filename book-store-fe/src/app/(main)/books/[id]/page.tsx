@@ -4,7 +4,7 @@ import { use } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Loading } from '@/components/ui/Loading';
@@ -12,6 +12,7 @@ import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
 import { useBook, useDeleteBook } from '@/hooks/useBooks';
 import { formatPrice, formatDate } from '@/lib/utils';
+import type { User } from '@/types';
 
 export default function BookDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -20,6 +21,25 @@ export default function BookDetailsPage({ params }: { params: Promise<{ id: stri
   const { mutate: deleteBook, isPending: isDeleting } = useDeleteBook();
   const { showToast } = useToast();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [loadingUser, setLoadingUser] = useState(true);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch('/api/auth/me');
+        const data = await response.json();
+        setCurrentUser(data.user);
+      } catch {
+        setCurrentUser(null);
+      } finally {
+        setLoadingUser(false);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  const isOwner = currentUser && book && book.userId === Number(currentUser.id);
 
   const handleDelete = () => {
     deleteBook(resolvedParams.id, {
@@ -33,7 +53,7 @@ export default function BookDetailsPage({ params }: { params: Promise<{ id: stri
     });
   };
 
-  if (isLoading) {
+  if (isLoading || loadingUser) {
     return (
       <div className="flex items-center justify-center min-h-100">
         <Loading size="lg" />
@@ -145,10 +165,27 @@ export default function BookDetailsPage({ params }: { params: Promise<{ id: stri
                   )}
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex gap-3 mt-auto">
-                  <Button asChild className="flex-1">
-                    <Link href={`/books/${book.id}/edit`}>
+                {isOwner && (
+                  <div className="flex gap-3 mt-auto">
+                    <Button asChild className="flex-1">
+                      <Link href={`/books/${book.id}/edit`}>
+                        <svg
+                          className="h-5 w-5 mr-2"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                          />
+                        </svg>
+                        Edit Book
+                      </Link>
+                    </Button>
+                    <Button variant="danger" onClick={() => setShowDeleteModal(true)}>
                       <svg
                         className="h-5 w-5 mr-2"
                         fill="none"
@@ -159,29 +196,13 @@ export default function BookDetailsPage({ params }: { params: Promise<{ id: stri
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                         />
                       </svg>
-                      Edit Book
-                    </Link>
-                  </Button>
-                  <Button variant="danger" onClick={() => setShowDeleteModal(true)}>
-                    <svg
-                      className="h-5 w-5 mr-2"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      />
-                    </svg>
-                    Delete
-                  </Button>
-                </div>
+                      Delete
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           </CardContent>
