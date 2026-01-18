@@ -61,7 +61,9 @@ export class BooksService {
         price: Number(b.books.price),
         thumbnail: b.books.thumbnail,
         author: b.authors?.name,
+        authorId: b.books.authorId,
         category: b.categories?.name,
+        categoryId: b.books.categoryId,
         tags: bookTagsList.map(t => ({ id: t.id, name: t.name })),
       };
     }));
@@ -101,7 +103,9 @@ export class BooksService {
       price: Number(book[0].books.price),
       thumbnail: book[0].books.thumbnail,
       author: book[0].authors?.name,
+      authorId: book[0].books.authorId,
       category: book[0].categories?.name,
+      categoryId: book[0].books.categoryId,
       tags: bookTagsList.map(t => ({ id: t.id, name: t.name })),
     };
   }
@@ -212,7 +216,9 @@ export class BooksService {
         price: Number(r.books.price),
         thumbnail: r.books.thumbnail,
         author: r.authors?.name,
+        authorId: r.books.authorId,
         category: r.categories?.name,
+        categoryId: r.books.categoryId,
         tags: bookTagsList.map(t => ({ id: t.id, name: t.name })),
       };
     }));

@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { BookCard } from '@/components/BookCard';
 import { FilterValues, BookFilters } from '@/components/BookFilters';
 import { Pagination } from '@/components/Pagination';
@@ -17,7 +16,7 @@ export default function MyBooksPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<FilterValues>({
     search: '',
-    category: 'all',
+    categoryId: 'all',
     priceRange: 'all',
     sortBy: 'createdAt',
     sortOrder: 'desc',
@@ -29,6 +28,11 @@ export default function MyBooksPage() {
     limit: 12,
     ...filters,
   });
+  const handleFiltersChange = (newFilters: FilterValues) => {
+    setCurrentPage(1);
+    setFilters(newFilters);
+  };
+
 
   const { mutate: deleteBook, isPending: isDeleting } = useDeleteBook();
   const { showToast } = useToast();
@@ -96,7 +100,7 @@ export default function MyBooksPage() {
           </div>
         </div>
 
-        <BookFilters onFilterChange={setFilters} />
+        <BookFilters filters={filters} onFilterChange={handleFiltersChange} />
 
         {books.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-100 gap-4">

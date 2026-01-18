@@ -1,71 +1,78 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { PRICE_RANGES } from '@/lib/constants';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import { Select } from './ui/Select';
 import apiClient from '@/lib/apiClient';
-import { useEffect } from 'react';
 
 export interface FilterValues {
   search: string;
   categoryId: number | 'all';
-  priceRange: string;
+  priceRange: string; // format: "min-max" or "all"
   sortBy: 'title' | 'price' | 'createdAt';
   sortOrder: 'asc' | 'desc';
 }
 
 interface BookFiltersProps {
-  filters: FilterValues;
+  filters?: FilterValues;
   onFilterChange: (filters: FilterValues) => void;
 }
 
+const defaultFilters: FilterValues = {
+  search: '',
+  categoryId: 'all',
+  priceRange: 'all',
+  sortBy: 'createdAt',
+  sortOrder: 'desc',
+};
+
 export function BookFilters({ filters, onFilterChange }: BookFiltersProps) {
+  const appliedFilters = useMemo(() => filters ?? defaultFilters, [filters]);
+
   const [showFilters, setShowFilters] = useState(false);
   const [categories, setCategories] = useState<Array<{ id: number; name: string }>>([]);
-  const [searchText, setSearchText] = useState(filters.search);
+  const [searchText, setSearchText] = useState(appliedFilters.search);
 
   useEffect(() => {
     const loadCategories = async () => {
       try {
-        const res = await apiClient.get<{ success: boolean; data: Array<{ id: number; name: string }> }>(
-          '/api/categories'
-        );
-        if (res.data?.success) 
+        const res = await apiClient.get<{
+          success: boolean;
+          data: Array<{ id: number; name: string }>;
+        }>('/api/categories');
+        if (res.data?.success) {
           setCategories(res.data.data);
+        }
       } catch {
-        return [];
+        // ignore errors; keep defaults
       }
     };
     loadCategories();
   }, []);
 
   useEffect(() => {
+    setSearchText(appliedFilters.search);
+  }, [appliedFilters.search]);
+
+  useEffect(() => {
     const id = setTimeout(() => {
-      if (searchText !== filters.search) 
-        onFilterChange({ ...filters, search: searchText });
+      if (searchText !== appliedFilters.search) {
+        onFilterChange({ ...appliedFilters, search: searchText });
+      }
     }, 600);
     return () => clearTimeout(id);
-  }, [searchText, filters, onFilterChange]);
+  }, [searchText, appliedFilters, onFilterChange]);
 
   const handleChange = (key: keyof FilterValues, value: string) => {
     const parsedValue =
-      key === 'categoryId'
-        ? (value === 'all' ? 'all' : Number(value))
-        : value;
-    const newFilters = { ...filters, [key]: parsedValue as never };
+      key === 'categoryId' ? (value === 'all' ? 'all' : Number(value)) : value;
+    const newFilters = { ...appliedFilters, [key]: parsedValue as never };
     onFilterChange(newFilters);
   };
 
   const handleReset = () => {
-    const defaultFilters: FilterValues = {
-      search: '',
-      categoryId: 'all',
-      priceRange: 'all',
-      sortBy: 'createdAt',
-      sortOrder: 'desc',
-    };
     onFilterChange(defaultFilters);
   };
 
@@ -81,6 +88,7 @@ export function BookFilters({ filters, onFilterChange }: BookFiltersProps) {
       label: range.label,
     })),
   ];
+
   const sortOptions = [
     { value: 'title', label: 'Title' },
     { value: 'price', label: 'Price' },
@@ -121,28 +129,28 @@ export function BookFilters({ filters, onFilterChange }: BookFiltersProps) {
           <Select
             label="Category"
             options={categoryOptions}
-            value={filters.categoryId === 'all' ? 'all' : String(filters.categoryId)}
+            value={appliedFilters.categoryId === 'all' ? 'all' : String(appliedFilters.categoryId)}
             onChange={(e) => handleChange('categoryId', e.target.value)}
           />
 
           <Select
             label="Price Range"
             options={priceOptions}
-            value={filters.priceRange}
+            value={appliedFilters.priceRange}
             onChange={(e) => handleChange('priceRange', e.target.value)}
           />
 
           <Select
             label="Sort By"
             options={sortOptions}
-            value={filters.sortBy}
+            value={appliedFilters.sortBy}
             onChange={(e) => handleChange('sortBy', e.target.value)}
           />
 
           <Select
             label="Order"
             options={orderOptions}
-            value={filters.sortOrder}
+            value={appliedFilters.sortOrder}
             onChange={(e) => handleChange('sortOrder', e.target.value)}
           />
 

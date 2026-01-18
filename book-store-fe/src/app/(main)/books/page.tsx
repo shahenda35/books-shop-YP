@@ -50,17 +50,17 @@ export default function BooksPage() {
   const totalPages = data?.pagination.pages || 1;
 
   return (
-    <div className="space-y-8">
-      <div className="bg-linear-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 rounded-lg p-8 border border-blue-100 dark:border-gray-700">
+    <>
+    <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">Books Shop</h1>
-            <p className="text-gray-600 dark:text-gray-400">
+           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Books Shop</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">
               Browse and discover your next favorite book • {data?.pagination.total || 0} books
               available
             </p>
           </div>
-          <div className="flex gap-2 flex-wrap justify-end">
+          <div className="flex gap-3">
             <Button asChild>
               <Link href="/books/new">
                 <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -76,7 +76,6 @@ export default function BooksPage() {
             </Button>
           </div>
         </div>
-      </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Filters</h2>
@@ -136,5 +135,6 @@ export default function BooksPage() {
         </>
       )}
     </div>
-  );
-}
+    </>  
+      );}
+      
