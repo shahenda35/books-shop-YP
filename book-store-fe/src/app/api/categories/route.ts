@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUser } from '@/lib/auth';
-import { AUTH_COOKIE_NAME } from '@/lib/constants';
+import { AUTH_COOKIE_NAME, STATIC_CATEGORIES } from '@/lib/constants';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+const STATIC_MODE = process.env.NEXT_PUBLIC_STATIC_MODE === 'true';
 
 export async function GET(request: NextRequest) {
   const user = await getUser();
@@ -14,6 +15,13 @@ export async function GET(request: NextRequest) {
   const token = cookieStore.get(AUTH_COOKIE_NAME);
 
   try {
+    // In static mode, return mock categories data
+    if (STATIC_MODE) 
+      return NextResponse.json({
+        success: true,
+        data: STATIC_CATEGORIES,
+      });
+
     const response = await fetch(`${API_URL}/categories`, {
       method: 'GET',
       headers: {
