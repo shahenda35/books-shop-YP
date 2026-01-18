@@ -39,7 +39,7 @@ export function BookForm({ book, mode }: BookFormProps) {
     getValues,
     reset,
   } = useForm<BookFormData>({
-    resolver: zodResolver(bookSchema),
+    resolver: zodResolver(bookSchema as any),
     defaultValues: {
       title: '',
       description: '',

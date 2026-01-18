@@ -24,7 +24,7 @@ export default function EditProfilePage() {
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<ProfileFormData>({
-    resolver: zodResolver(profileSchema),
+    resolver: zodResolver(profileSchema as any),
   });
 
   useEffect(() => {

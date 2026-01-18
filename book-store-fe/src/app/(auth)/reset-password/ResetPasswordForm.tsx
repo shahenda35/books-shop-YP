@@ -1,0 +1,140 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { resetPasswordSchema, ResetPasswordFormData } from '@/lib/validation';
+import { Button } from '@/components/ui/Button';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/Card';
+import { Input } from '@/components/ui/Input';
+import { useToast } from '@/components/ui/Toast';
+
+export default function ResetPasswordForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { showToast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const emailParam = searchParams.get('email') || '';
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ResetPasswordFormData>({
+    resolver: zodResolver(resetPasswordSchema as any),
+    defaultValues: {
+      email: emailParam,
+    },
+  });
+
+  const onSubmit = async (data: ResetPasswordFormData) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'}/auth/reset-password`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        },
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        showToast(error.message || 'Failed to reset password', 'error');
+        return;
+      }
+
+      showToast('Password reset successfully! Please login with your new password.', 'success');
+      router.push('/login');
+    } catch {
+      showToast('An error occurred', 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <div className="mx-auto mb-4 text-6xl">🔑</div>
+          <CardTitle>Reset Your Password</CardTitle>
+          <CardDescription>Enter the OTP from your email and your new password</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <Input
+              label="Email Address"
+              type="email"
+              placeholder="Enter your email"
+              error={errors.email?.message}
+              {...register('email')}
+            />
+
+            <Input
+              label="OTP (One-Time Password)"
+              type="text"
+              placeholder="Enter 6-digit OTP"
+              maxLength={6}
+              error={errors.otp?.message}
+              {...register('otp')}
+            />
+
+            <div className="relative">
+              <Input
+                label="New Password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Enter new password"
+                error={errors.newPassword?.message}
+                {...register('newPassword')}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-9 text-gray-500"
+              >
+                {showPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
+
+            <div className="relative">
+              <Input
+                label="Confirm Password"
+                type={showConfirmPassword ? 'text' : 'password'}
+                placeholder="Confirm new password"
+                error={errors.confirmPassword?.message}
+                {...register('confirmPassword')}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-9 text-gray-500"
+              >
+                {showConfirmPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
+
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? 'Resetting...' : 'Reset Password'}
+            </Button>
+          </form>
+
+          <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-4">
+            Back to{' '}
+            <Link href="/login" className="text-blue-600 dark:text-blue-400 hover:underline">
+              login
+            </Link>
+          </p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
