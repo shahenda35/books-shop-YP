@@ -50,4 +50,6 @@ export const changePasswordSchema = z
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type ProfileFormData = z.infer<typeof profileSchema>;
 export type BookFormData = z.infer<typeof bookSchema>;
+export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
+export type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;

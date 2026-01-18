@@ -5,14 +5,11 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { forgotPasswordSchema } from '@/lib/validation';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { useToast } from '@/components/ui/Toast';
-
-const forgotPasswordSchema = z.object({
-  email: z.string().email('Invalid email address'),
-});
 
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
