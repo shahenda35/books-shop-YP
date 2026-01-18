@@ -4,71 +4,79 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/lib/apiClient';
 
 interface UseBooksParams extends Partial<FilterValues> {
-    page?: number;
-    limit?: number;
+  page?: number;
+  limit?: number;
 }
 
 export function useBooks(params: UseBooksParams = {}) {
-    return useQuery({
-        queryKey: ['books', params],
-        queryFn: async () => {
-            const searchParams = new URLSearchParams();
+  return useQuery({
+    queryKey: ['books', params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
 
-            if (params.page) searchParams.append('page', params.page.toString());
-            if (params.limit) searchParams.append('limit', params.limit.toString());
-            if (params.search) searchParams.append('search', params.search);
-            if (params.category && params.category !== 'all') searchParams.append('category', params.category);
-            if (params.priceRange && params.priceRange !== 'all') searchParams.append('priceRange', params.priceRange);
-            if (params.sortBy) searchParams.append('sortBy', params.sortBy);
-            if (params.sortOrder) searchParams.append('sortOrder', params.sortOrder);
+      if (params.page) searchParams.append('page', params.page.toString());
+      if (params.limit) searchParams.append('limit', params.limit.toString());
+      if (params.search) searchParams.append('search', params.search);
+      if (params.category && params.category !== 'all')
+        searchParams.append('category', params.category);
+      if (params.priceRange && params.priceRange !== 'all')
+        searchParams.append('priceRange', params.priceRange);
+      if (params.sortBy) searchParams.append('sortBy', params.sortBy);
+      if (params.sortOrder) searchParams.append('sortOrder', params.sortOrder);
 
-            const response = await apiClient.get<{ success: boolean; data: PaginatedResponse<Book> }>(`/api/books?${searchParams}`);
-            return response.data.data;
-        },
-    });
+      const response = await apiClient.get<{ success: boolean; data: PaginatedResponse<Book> }>(
+        `/api/books?${searchParams}`,
+      );
+      return response.data.data;
+    },
+  });
 }
 
 export function useBook(id: string) {
-    return useQuery({
-        queryKey: ['book', id],
-        queryFn: async () => {
-            const response = await apiClient.get<{ success: boolean; data: Book }>(`/api/books/${id}`);
-            return response.data.data;
-        },
-        enabled: !!id,
-    });
+  return useQuery({
+    queryKey: ['book', id],
+    queryFn: async () => {
+      const response = await apiClient.get<{ success: boolean; data: Book }>(`/api/books/${id}`);
+      return response.data.data;
+    },
+    enabled: !!id,
+  });
 }
 
 export function useMyBooks(params: UseBooksParams = {}) {
-    return useQuery({
-        queryKey: ['my-books', params],
-        queryFn: async () => {
-            const searchParams = new URLSearchParams();
+  return useQuery({
+    queryKey: ['my-books', params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
 
-            if (params.page) searchParams.append('page', params.page.toString());
-            if (params.limit) searchParams.append('limit', params.limit.toString());
-            if (params.search) searchParams.append('search', params.search);
-            if (params.category && params.category !== 'all') searchParams.append('category', params.category);
-            if (params.priceRange && params.priceRange !== 'all') searchParams.append('priceRange', params.priceRange);
-            if (params.sortBy) searchParams.append('sortBy', params.sortBy);
-            if (params.sortOrder) searchParams.append('sortOrder', params.sortOrder);
+      if (params.page) searchParams.append('page', params.page.toString());
+      if (params.limit) searchParams.append('limit', params.limit.toString());
+      if (params.search) searchParams.append('search', params.search);
+      if (params.category && params.category !== 'all')
+        searchParams.append('category', params.category);
+      if (params.priceRange && params.priceRange !== 'all')
+        searchParams.append('priceRange', params.priceRange);
+      if (params.sortBy) searchParams.append('sortBy', params.sortBy);
+      if (params.sortOrder) searchParams.append('sortOrder', params.sortOrder);
 
-            const response = await apiClient.get<{ success: boolean; data: PaginatedResponse<Book> }>(`/api/my-books?${searchParams}`);
-            return response.data.data;
-        },
-    });
+      const response = await apiClient.get<{ success: boolean; data: PaginatedResponse<Book> }>(
+        `/api/my-books?${searchParams}`,
+      );
+      return response.data.data;
+    },
+  });
 }
 
 export function useDeleteBook() {
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-    return useMutation({
-        mutationFn: async (id: string) => {
-            await apiClient.delete(`/api/books/${id}`);
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['books'] });
-            queryClient.invalidateQueries({ queryKey: ['my-books'] });
-        },
-    });
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await apiClient.delete(`/api/books/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['books'] });
+      queryClient.invalidateQueries({ queryKey: ['my-books'] });
+    },
+  });
 }

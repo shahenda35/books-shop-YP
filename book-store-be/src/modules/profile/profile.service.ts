@@ -16,7 +16,7 @@ export class ProfileService {
     };
   }
 
-  async updateProfile(userId: string, data: { fullName?: string; phoneNumber?: string , username?: string}) {
+  async updateProfile(userId: string, data: { fullName?: string; email?: string }) {
     const [updatedUser] = await db
       .update(users)
       .set({ ...data, updatedAt: new Date() })

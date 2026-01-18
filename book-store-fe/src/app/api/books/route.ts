@@ -5,73 +5,67 @@ import { AUTH_COOKIE_NAME } from '@/lib/constants';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
 export async function GET(request: NextRequest) {
-    const user = await getUser();
-    if (!user) {
-        return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
-    }
+  const user = await getUser();
+  if (!user) {
+    return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+  }
 
-    const cookieStore = request.cookies;
-    const token = cookieStore.get(AUTH_COOKIE_NAME);
+  const cookieStore = request.cookies;
+  const token = cookieStore.get(AUTH_COOKIE_NAME);
 
-    if (!token) {
-        return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
-    }
+  if (!token) {
+    return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+  }
 
-    try {
-        const searchParams = request.nextUrl.searchParams;
-        const response = await fetch(`${API_URL}/books?${searchParams.toString()}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token.value}`,
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-        });
+  try {
+    const searchParams = request.nextUrl.searchParams;
+    const response = await fetch(`${API_URL}/books?${searchParams.toString()}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token.value}`,
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    });
 
-        const data = await response.json();
-        return NextResponse.json(data, { status: response.status });
-    } catch (error) {
-        console.error('Books API error:', error);
-        return NextResponse.json(
-            { success: false, message: 'Failed to fetch books' },
-            { status: 500 }
-        );
-    }
+    const data = await response.json();
+    return NextResponse.json(data, { status: response.status });
+  } catch (error) {
+    console.error('Books API error:', error);
+    return NextResponse.json({ success: false, message: 'Failed to fetch books' }, { status: 500 });
+  }
 }
 
 export async function POST(request: NextRequest) {
-    const user = await getUser();
-    if (!user) {
-        return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
-    }
+  const user = await getUser();
+  if (!user) {
+    return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+  }
 
-    const cookieStore = request.cookies;
-    const token = cookieStore.get(AUTH_COOKIE_NAME);
+  const cookieStore = request.cookies;
+  const token = cookieStore.get(AUTH_COOKIE_NAME);
 
-    if (!token) {
-        return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
-    }
+  if (!token) {
+    return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+  }
 
-    try {
-        const body = await request.json();
-        
-        const response = await fetch(`${API_URL}/books`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token.value}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(body),
-            credentials: 'include',
-        });
+  try {
+    const body = await request.json();
 
-        const data = await response.json();
-        return NextResponse.json(data, { status: response.status });
-    } catch (error) {
-        console.error('Create book error:', error);
-        return NextResponse.json(
-            { success: false, message: 'Failed to create book' },
-            { status: 500 }
-        );
-    }
+    const response = await fetch(`${API_URL}/books`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token.value}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+      credentials: 'include',
+    });
+
+    const data = await response.json();
+    return NextResponse.json(data, { status: response.status });
+  } catch (error) {
+    console.error('Create book error:', error);
+    return NextResponse.json({ success: false, message: 'Failed to create book' }, { status: 500 });
+  }
 }
