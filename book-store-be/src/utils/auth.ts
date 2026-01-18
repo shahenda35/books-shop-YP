@@ -5,7 +5,9 @@ import { config } from '../config';
 export const hashPassword = async (password: string): Promise<string> => {
     return argon2.hash(password, {
         type: argon2.argon2id,
-        hashLength: 32,
+        memoryCost: 65536, 
+        timeCost: 3, 
+        parallelism: 1, 
     });
 };
 

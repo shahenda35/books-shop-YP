@@ -33,10 +33,10 @@ async function seed() {
 
         const usersData = [
             {
-                username: 'johndoe',
-                email: 'john@example.com',
-                password: 'password123',
-                fullName: 'John Doe',
+                username: 'admin',
+                email: 'admin@books.com',
+                password: 'admin123',
+                fullName: 'Admin User',
                 phoneNumber: '+1234567890',
             },
             {
