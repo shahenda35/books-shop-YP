@@ -14,11 +14,16 @@ export default function BooksPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<FilterValues>({
     search: '',
-    category: 'all',
+    categoryId: 'all',
     priceRange: 'all',
     sortBy: 'createdAt',
     sortOrder: 'desc',
   });
+
+  const handleFiltersChange = (newFilters: FilterValues) => {
+    setCurrentPage(1);
+    setFilters(newFilters);
+  };
 
   const { data, isLoading, error } = useBooks({
     page: currentPage,
@@ -75,7 +80,7 @@ export default function BooksPage() {
 
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Filters</h2>
-        <BookFilters onFilterChange={setFilters} />
+        <BookFilters filters={filters} onFilterChange={handleFiltersChange} />
       </div>
 
       {books.length === 0 ? (

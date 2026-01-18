@@ -13,6 +13,9 @@ export class BooksController {
         limit: Number(query.limit) || 10,
         search: query.search,
         sort: query.sort as 'asc' | 'desc' | undefined,
+        categoryId: query.categoryId ? Number(query.categoryId) : undefined,
+        minPrice: query.minPrice ? Number(query.minPrice) : undefined,
+        maxPrice: query.maxPrice ? Number(query.maxPrice) : undefined,
       });
       return successResponse(c, books);
     } catch (err) {
@@ -77,7 +80,7 @@ export class BooksController {
       });
 
       return successResponse(c, books);
-    } catch (e) {
+    } catch{
       return errorResponse(c, 'Failed to fetch my books');
     }
   }

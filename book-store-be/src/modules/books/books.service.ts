@@ -1,6 +1,6 @@
 import { db } from '../../db';
 import { books, authors, categories, bookTags, tags } from '../../db/schema';
-import { eq, like, sql, and, count } from 'drizzle-orm';
+import { eq, ilike, sql, and, count } from 'drizzle-orm';
 import type { NewBook } from '../../db/schema/books';
 
 type BookQuery = {
@@ -21,7 +21,7 @@ export class BooksService {
     const offset = (page - 1) * limit;
 
     const searchFilter = query.search
-      ? like(books.title, `%${query.search}%`)
+      ? ilike(books.title, `%${query.search}%`)
       : undefined;
 
     const categoryFilter = query.categoryId ? eq(books.categoryId, query.categoryId) : undefined;
@@ -175,7 +175,7 @@ export class BooksService {
 
     const whereConditions = [
       eq(books.userId, userId),
-      query.search ? like(books.title, `%${query.search}%`) : undefined,
+      query.search ? ilike(books.title, `%${query.search}%`) : undefined,
     ].filter(Boolean);
 
     const orderBy =

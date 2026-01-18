@@ -1,6 +1,6 @@
 'use server';
 
-import { login as authLogin, logout as authLogout, updateUser, getUser } from '@/lib/auth';
+import { login as authLogin, logout as authLogout, updateUser, getUser, changePassword as changePasswordLib } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 
 export async function login(formData: FormData) {
@@ -43,4 +43,17 @@ export async function updateProfile(data: { fullName: string; email: string }) {
 
 export async function getCurrentUser() {
   return await getUser();
+}
+
+export async function changePassword(data: { currentPassword: string; newPassword: string; confirmPassword: string }) {
+  try {
+    const result = await changePasswordLib(data);
+    if (!result) 
+      return { success: false, error: 'Failed to change password' };
+    
+    return { success: true };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to change password';
+    return { success: false, error: message };
+  }
 }

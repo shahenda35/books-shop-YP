@@ -17,12 +17,14 @@ export function useBooks(params: UseBooksParams = {}) {
       if (params.page) searchParams.append('page', params.page.toString());
       if (params.limit) searchParams.append('limit', params.limit.toString());
       if (params.search) searchParams.append('search', params.search);
-      if (params.category && params.category !== 'all')
-        searchParams.append('category', params.category);
-      if (params.priceRange && params.priceRange !== 'all')
-        searchParams.append('priceRange', params.priceRange);
-      if (params.sortBy) searchParams.append('sortBy', params.sortBy);
-      if (params.sortOrder) searchParams.append('sortOrder', params.sortOrder);
+      if (params.categoryId && params.categoryId !== 'all') 
+        searchParams.append('categoryId', String(params.categoryId));
+      if (params.priceRange && params.priceRange !== 'all') {
+        const [min, max] = params.priceRange.split('-');
+        if (min) searchParams.append('minPrice', min);
+        if (max) searchParams.append('maxPrice', max);
+      }
+      if (params.sortOrder) searchParams.append('sort', params.sortOrder);
 
       const response = await apiClient.get<{ success: boolean; data: PaginatedResponse<Book> }>(
         `/api/books?${searchParams}`,
@@ -52,12 +54,14 @@ export function useMyBooks(params: UseBooksParams = {}) {
       if (params.page) searchParams.append('page', params.page.toString());
       if (params.limit) searchParams.append('limit', params.limit.toString());
       if (params.search) searchParams.append('search', params.search);
-      if (params.category && params.category !== 'all')
-        searchParams.append('category', params.category);
-      if (params.priceRange && params.priceRange !== 'all')
-        searchParams.append('priceRange', params.priceRange);
-      if (params.sortBy) searchParams.append('sortBy', params.sortBy);
-      if (params.sortOrder) searchParams.append('sortOrder', params.sortOrder);
+      if (params.categoryId && params.categoryId !== 'all') 
+        searchParams.append('categoryId', String(params.categoryId));
+      if (params.priceRange && params.priceRange !== 'all') {
+        const [min, max] = params.priceRange.split('-');
+        if (min) searchParams.append('minPrice', min);
+        if (max) searchParams.append('maxPrice', max);
+      }
+      if (params.sortOrder) searchParams.append('sort', params.sortOrder);
 
       const response = await apiClient.get<{ success: boolean; data: PaginatedResponse<Book> }>(
         `/api/my-books?${searchParams}`,

@@ -1,56 +1,77 @@
 'use client';
 
 import { useState } from 'react';
-import { CATEGORIES, PRICE_RANGES } from '@/lib/constants';
-import { BookCategory } from '@/types';
+import { PRICE_RANGES } from '@/lib/constants';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import { Select } from './ui/Select';
+import apiClient from '@/lib/apiClient';
+import { useEffect } from 'react';
 
 export interface FilterValues {
   search: string;
-  category: BookCategory | 'all';
+  categoryId: number | 'all';
   priceRange: string;
   sortBy: 'title' | 'price' | 'createdAt';
   sortOrder: 'asc' | 'desc';
 }
 
 interface BookFiltersProps {
+  filters: FilterValues;
   onFilterChange: (filters: FilterValues) => void;
 }
 
-export function BookFilters({ onFilterChange }: BookFiltersProps) {
-  const [filters, setFilters] = useState<FilterValues>({
-    search: '',
-    category: 'all',
-    priceRange: 'all',
-    sortBy: 'createdAt',
-    sortOrder: 'desc',
-  });
-
+export function BookFilters({ filters, onFilterChange }: BookFiltersProps) {
   const [showFilters, setShowFilters] = useState(false);
+  const [categories, setCategories] = useState<Array<{ id: number; name: string }>>([]);
+  const [searchText, setSearchText] = useState(filters.search);
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const res = await apiClient.get<{ success: boolean; data: Array<{ id: number; name: string }> }>(
+          '/api/categories'
+        );
+        if (res.data?.success) 
+          setCategories(res.data.data);
+      } catch {
+        return [];
+      }
+    };
+    loadCategories();
+  }, []);
+
+  useEffect(() => {
+    const id = setTimeout(() => {
+      if (searchText !== filters.search) 
+        onFilterChange({ ...filters, search: searchText });
+    }, 600);
+    return () => clearTimeout(id);
+  }, [searchText, filters, onFilterChange]);
 
   const handleChange = (key: keyof FilterValues, value: string) => {
-    const newFilters = { ...filters, [key]: value };
-    setFilters(newFilters);
+    const parsedValue =
+      key === 'categoryId'
+        ? (value === 'all' ? 'all' : Number(value))
+        : value;
+    const newFilters = { ...filters, [key]: parsedValue as never };
     onFilterChange(newFilters);
   };
 
   const handleReset = () => {
     const defaultFilters: FilterValues = {
       search: '',
-      category: 'all',
+      categoryId: 'all',
       priceRange: 'all',
       sortBy: 'createdAt',
       sortOrder: 'desc',
     };
-    setFilters(defaultFilters);
     onFilterChange(defaultFilters);
   };
 
   const categoryOptions = [
     { value: 'all', label: 'All Categories' },
-    ...CATEGORIES.map((cat) => ({ value: cat, label: cat })),
+    ...categories.map((cat) => ({ value: String(cat.id), label: cat.name })),
   ];
 
   const priceOptions = [
@@ -73,14 +94,13 @@ export function BookFilters({ onFilterChange }: BookFiltersProps) {
 
   return (
     <div className="space-y-4">
-      {/* Search Bar */}
       <div className="flex gap-2">
         <div className="flex-1">
           <Input
             type="search"
             placeholder="Search books by title or author..."
-            value={filters.search}
-            onChange={(e) => handleChange('search', e.target.value)}
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
           />
         </div>
         <Button variant="outline" onClick={() => setShowFilters(!showFilters)}>
@@ -96,14 +116,13 @@ export function BookFilters({ onFilterChange }: BookFiltersProps) {
         </Button>
       </div>
 
-      {/* Advanced Filters */}
       {showFilters && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <Select
             label="Category"
             options={categoryOptions}
-            value={filters.category}
-            onChange={(e) => handleChange('category', e.target.value)}
+            value={filters.categoryId === 'all' ? 'all' : String(filters.categoryId)}
+            onChange={(e) => handleChange('categoryId', e.target.value)}
           />
 
           <Select

@@ -140,3 +140,30 @@ export async function isAuthenticated(): Promise<boolean> {
   const authToken = cookieStore.get(AUTH_COOKIE_NAME);
   return !!authToken;
 }
+
+export async function changePassword(payload: { currentPassword: string; newPassword: string; confirmPassword: string }): Promise<{ message: string } | null> {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get(AUTH_COOKIE_NAME);
+
+    if (!token) return null;
+
+    const response = await fetch(`${API_URL}/profile/change-password`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token.value}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+      credentials: 'include',
+    });
+
+    if (!response.ok) return null;
+
+    const result = await response.json();
+    return result.data || { message: 'Password changed successfully' };
+  } catch (error) {
+    console.error('Change password error:', error);
+    return null;
+  }
+}
