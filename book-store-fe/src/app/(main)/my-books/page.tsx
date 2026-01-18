@@ -11,11 +11,9 @@ import { Loading } from '@/components/ui/Loading';
 import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
 import { useMyBooks, useDeleteBook } from '@/hooks/useBooks';
-import { logout } from '@/app/actions/auth';
 import { Book } from '@/types';
 
 export default function MyBooksPage() {
-    const router = useRouter();
     const [currentPage, setCurrentPage] = useState(1);
     const [filters, setFilters] = useState<FilterValues>({
         search: '',
@@ -34,13 +32,6 @@ export default function MyBooksPage() {
 
     const { mutate: deleteBook, isPending: isDeleting } = useDeleteBook();
     const { showToast } = useToast();
-
-    const handleLogout = async () => {
-        const result = await logout();
-        if (result.success) {
-            router.push('/login');
-        }
-    };
 
     const handleDelete = () => {
         if (!deleteId) return;
@@ -87,20 +78,6 @@ export default function MyBooksPage() {
                         </p>
                     </div>
                     <div className="flex gap-3">
-                        <Button asChild variant="outline">
-                            <Link href="/books">
-                                <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                                </svg>
-                                Back to Books
-                            </Link>
-                        </Button>
-                        <Button variant="outline" onClick={handleLogout}>
-                            <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                            </svg>
-                            Logout
-                        </Button>
                         <Button asChild>
                             <Link href="/books/new">
                                 <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
