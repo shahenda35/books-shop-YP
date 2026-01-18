@@ -36,7 +36,6 @@ export function BookForm({ book, mode }: BookFormProps) {
     watch,
     getValues,
     reset,
-    register,
   } = useForm<BookFormData>({
     resolver: zodResolver(bookSchema),
     defaultValues: {
@@ -156,31 +155,22 @@ export function BookForm({ book, mode }: BookFormProps) {
       return;
     }
 
-    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-
-    if (!cloudName || !uploadPreset) {
-      showToast('Image upload is not configured. Please set Cloudinary env vars.', 'error');
-      return;
-    }
-
     try {
       setUploading(true);
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('upload_preset', uploadPreset);
 
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+      const res = await fetch('/api/upload/image', {
         method: 'POST',
         body: formData,
       });
 
       const result = await res.json();
-      if (!res.ok || !result.secure_url) {
-        throw new Error(result?.error?.message || 'Upload failed');
-      }
+      if (!res.ok || !result.url) 
+        throw new Error(result?.error || 'Upload failed');
+      
 
-      setValue('thumbnail', result.secure_url, {
+      setValue('thumbnail', result.url, {
         shouldValidate: true,
         shouldDirty: true,
       });
@@ -306,7 +296,7 @@ export function BookForm({ book, mode }: BookFormProps) {
                     disabled={uploading}
                   />
                   <p className="text-xs text-gray-500">
-                    {uploading ? 'Uploading...' : 'Upload to Cloudinary (max 5MB)'}
+                    {uploading ? 'Uploading...' : 'Upload image (max 5MB)'}
                   </p>
                 </div>
               </div>
