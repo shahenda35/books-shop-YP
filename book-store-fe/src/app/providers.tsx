@@ -1,0 +1,15 @@
+"use client";
+
+import { PropsWithChildren } from "react";
+import { ReactQueryProvider } from "@/components/ReactQueryProvider";
+import { ThemeProvider } from "next-themes";
+
+export function Providers({ children }: PropsWithChildren) {
+  return (
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <ReactQueryProvider>
+        {children}
+      </ReactQueryProvider>
+    </ThemeProvider>
+  );
+}
