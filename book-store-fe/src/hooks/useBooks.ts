@@ -7,6 +7,7 @@ interface UseBooksParams extends Partial<FilterValues> {
   page?: number;
   limit?: number;
 }
+const STATIC_MODE = process.env.NEXT_PUBLIC_STATIC_MODE === 'true';
 
 export function useBooks(params: UseBooksParams = {}) {
   return useQuery({
@@ -26,10 +27,17 @@ export function useBooks(params: UseBooksParams = {}) {
       }
       if (params.sortOrder) searchParams.append('sort', params.sortOrder);
 
-     const response = await apiClient.get<{ success: boolean; data: PaginatedResponse<Book> }>(
+      if (STATIC_MODE) {
+         const response = await apiClient.get<PaginatedResponse<Book>>(
+        `/api/books?${searchParams}`,
+        );
+      return response.data;
+      }else{
+            const response = await apiClient.get<{ success: boolean; data: PaginatedResponse<Book> }>(
         `/api/books?${searchParams}`,
       );
       return response.data.data;
+      }
     
     },
   });
@@ -64,10 +72,17 @@ export function useMyBooks(params: UseBooksParams = {}) {
       }
       if (params.sortOrder) searchParams.append('sort', params.sortOrder);
 
-       const response = await apiClient.get<{ success: boolean; data: PaginatedResponse<Book> }>(
-        `/api/my-books?${searchParams}`,
-      );
-      return response.data.data;
+      if (STATIC_MODE) {
+        const response = await apiClient.get<PaginatedResponse<Book>>(
+          `/api/books?${searchParams}`,
+        );
+        return response.data;
+      }else{
+        const response = await apiClient.get<{ success: boolean; data: PaginatedResponse<Book> }>(
+          `/api/books?${searchParams}`,
+        );
+        return response.data.data;
+      }
   
     },
   });
